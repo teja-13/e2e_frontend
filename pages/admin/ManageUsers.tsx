@@ -9,12 +9,15 @@ const ManageUsers = () => {
   const handleAddUser = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.post("http://localhost:5000/add-user", {
+      const response = await axios.post(
+        "https://e2e-backend-1zjm.onrender.com/add-user",
+        {
         token,
         email,
         password,
         role,
-      });
+        }
+      );
       alert(response.data.message);
     } catch (error) {
       alert(error.response?.data?.message || "An error occurred");
@@ -24,10 +27,13 @@ const ManageUsers = () => {
   const handleApproveUser = async (userId) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.post("http://localhost:5000/approve-user", {
+      const response = await axios.post(
+        "https://e2e-backend-1zjm.onrender.com/approve-user",
+        {
         token,
         userId,
-      });
+        }
+      );
       alert(response.data.message);
     } catch (error) {
       alert(error.response?.data?.message || "An error occurred");
@@ -37,10 +43,13 @@ const ManageUsers = () => {
   const handleRejectUser = async (userId) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.post("http://localhost:5000/reject-user", {
+      const response = await axios.post(
+        "https://e2e-backend-1zjm.onrender.com/reject-user",
+        {
         token,
         userId,
-      });
+        }
+      );
       alert(response.data.message);
     } catch (error) {
       alert(error.response?.data?.message || "An error occurred");

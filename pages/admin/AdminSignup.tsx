@@ -7,11 +7,14 @@ const AdminSignup = () => {
 
   const handleSignup = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/signup", {
+      const response = await axios.post(
+        "https://e2e-backend-1zjm.onrender.com/signup",
+        {
         email,
         password,
         role: "admin",
-      });
+        }
+      );
       alert(response.data.message);
     } catch (error) {
       alert(error.response?.data?.message || "An error occurred");

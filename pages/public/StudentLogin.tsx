@@ -10,10 +10,13 @@ const StudentLogin = () => {
       const email = "teja@gmail.com"; // Replace with actual input value
       const password = "12345678"; // Replace with actual input value
 
-      const response = await axios.post("http://localhost:5000/login", {
+      const response = await axios.post(
+        "https://e2e-backend-1zjm.onrender.com/login",
+        {
         email,
         password,
-      });
+        }
+      );
 
       localStorage.setItem("token", response.data.token);
       alert(response.data.message);

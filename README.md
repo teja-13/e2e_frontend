@@ -9,7 +9,7 @@ Backend (`/backend`):
 - Install & run: `npm install` then `npm start`.
 
 Frontend (`/frontend`):
-- Copy `.env.example` → `.env` and set `VITE_API_BASE_URL` (e.g., `http://localhost:5000`).
+- Copy `.env.example` → `.env` and set `VITE_API_BASE_URL` (default: `https://e2e-backend-1zjm.onrender.com`).
 - Install & run: `npm install` then `npm run dev`.
 
 ## Key Features
