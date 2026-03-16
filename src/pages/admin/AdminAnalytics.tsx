@@ -57,7 +57,7 @@ const AdminAnalytics = () => {
   const topBooks = useMemo(() => analytics?.topBooks || [], [analytics]);
   const overdueRows = useMemo(() => analytics?.overdue || [], [analytics]);
   const activityItems = useMemo(
-    () => (analytics?.activity || []).map((a) => ({ time: a.time, message: a.message ?? "", type: "user" as const })),
+    () => (analytics?.activity || []).map((a) => ({ time: a.time ?? "just now", message: a.message ?? "", type: "user" as const })),
     [analytics]
   );
 
