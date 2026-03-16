@@ -28,6 +28,7 @@ import AdminLayout from "./components/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ManageUsers from "./pages/admin/ManageUsers";
 import AdminManageBooks from "./pages/admin/ManageBooks";
+import AdminAnalytics from "./pages/admin/AdminAnalytics";
 
 function App() {
   return (
@@ -60,6 +61,7 @@ function App() {
         <Route path="dashboard" element={<AdminDashboard />} />
         <Route path="users" element={<ManageUsers />} />
         <Route path="books" element={<AdminManageBooks />} />
+        <Route path="analytics" element={<AdminAnalytics />} />
       </Route>
     </Routes>
   );

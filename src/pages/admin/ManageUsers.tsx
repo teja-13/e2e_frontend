@@ -40,6 +40,8 @@ const ManageUsers = () => {
   const [currentLibrarians, setCurrentLibrarians] = useState<Staff[]>([]);
   const [studentSearch, setStudentSearch] = useState("");
   const [librarianSearch, setLibrarianSearch] = useState("");
+  const [addingLib, setAddingLib] = useState(false);
+  const [libForm, setLibForm] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -91,9 +93,65 @@ const ManageUsers = () => {
     }
   };
 
+  const deleteStudent = async (id: string) => {
+    try {
+      await api.delete(`/librarian/students/${id}`);
+      await load();
+    } catch (err) {
+      setError("Unable to delete student");
+    }
+  };
+
+  const deleteLibrarian = async (id: string) => {
+    try {
+      await api.delete(`/admin/librarians/${id}`);
+      await load();
+    } catch (err) {
+      setError("Unable to delete librarian");
+    }
+  };
+
+  const resetStudentPassword = async (id: string) => {
+    const newPassword = window.prompt("Enter new password for student");
+    if (!newPassword) return;
+    try {
+      await api.put(`/admin/students/${id}/password`, { newPassword });
+      alert("Password updated");
+    } catch (err: any) {
+      const message = err?.response?.data?.message || "Unable to reset password";
+      setError(message);
+    }
+  };
+
+  const resetLibrarianPassword = async (id: string) => {
+    const newPassword = window.prompt("Enter new password for librarian");
+    if (!newPassword) return;
+    try {
+      await api.put(`/admin/librarians/${id}/password`, { newPassword });
+      alert("Password updated");
+    } catch (err: any) {
+      const message = err?.response?.data?.message || "Unable to reset password";
+      setError(message);
+    }
+  };
+
+  const addLibrarian = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    try {
+      await api.post("/admin/add-user", { ...libForm, role: "librarian" });
+      setLibForm({ name: "", email: "", password: "" });
+      setAddingLib(false);
+      await load();
+    } catch (err: any) {
+      const message = err?.response?.data?.message || "Unable to add librarian";
+      setError(message);
+    }
+  };
+
   const filteredStudents = currentStudents.filter((s) => {
-    if (!studentSearch.trim()) return true;
-    const term = studentSearch.toLowerCase();
+    const term = studentSearch.trim().toLowerCase();
+    if (!term) return true;
     return (
       (s.name && s.name.toLowerCase().includes(term)) ||
       (s.email && s.email.toLowerCase().includes(term)) ||
@@ -103,8 +161,8 @@ const ManageUsers = () => {
   });
 
   const filteredLibrarians = currentLibrarians.filter((s) => {
-    if (!librarianSearch.trim()) return true;
-    const term = librarianSearch.toLowerCase();
+    const term = librarianSearch.trim().toLowerCase();
+    if (!term) return true;
     return (
       (s.name && s.name.toLowerCase().includes(term)) ||
       (s.email && s.email.toLowerCase().includes(term))
@@ -322,6 +380,38 @@ const ManageUsers = () => {
                     ID: {s.studentId || s.rollNumber || "-"}
                   </p>
                 </div>
+                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                  <button
+                    onClick={() => resetStudentPassword(s._id)}
+                    style={{
+                      padding: "8px 16px",
+                      borderRadius: "6px",
+                      border: "1px solid var(--border-gold)",
+                      background: "var(--black-secondary)",
+                      color: "var(--gold-main)",
+                      cursor: "pointer",
+                      fontWeight: "600",
+                      fontSize: "0.9rem",
+                    }}
+                  >
+                    Reset Password
+                  </button>
+                  <button
+                    onClick={() => deleteStudent(s._id)}
+                    style={{
+                      padding: "8px 16px",
+                      borderRadius: "6px",
+                      border: "none",
+                      background: "#d9534f",
+                      color: "white",
+                      cursor: "pointer",
+                      fontWeight: "600",
+                      fontSize: "0.9rem",
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -345,6 +435,55 @@ const ManageUsers = () => {
                 }}
               />
             </div>
+
+            <div className="settings-section-item" style={{ padding: "16px" }}>
+              <h3 style={{ marginTop: 0, color: "var(--gold-main)" }}>Add Librarian</h3>
+              {!addingLib && (
+                <button className="btn-primary" onClick={() => setAddingLib(true)} style={{ width: "fit-content" }}>
+                  New Librarian
+                </button>
+              )}
+              {addingLib && (
+                <form onSubmit={addLibrarian} className="profile-form">
+                  <div className="form-group">
+                    <label>Name</label>
+                    <input
+                      type="text"
+                      value={libForm.name}
+                      onChange={(e) => setLibForm((p) => ({ ...p, name: e.target.value }))}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Email</label>
+                    <input
+                      type="email"
+                      value={libForm.email}
+                      onChange={(e) => setLibForm((p) => ({ ...p, email: e.target.value }))}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Password</label>
+                    <input
+                      type="password"
+                      value={libForm.password}
+                      onChange={(e) => setLibForm((p) => ({ ...p, password: e.target.value }))}
+                      required
+                    />
+                  </div>
+                  <div className="form-button-group">
+                    <button type="button" className="btn-secondary" onClick={() => { setAddingLib(false); setLibForm({ name: "", email: "", password: "" }); }}>
+                      Cancel
+                    </button>
+                    <button type="submit" className="btn-primary">
+                      Save Librarian
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
+
             {filteredLibrarians.length === 0 && !loading && <p className="muted">No librarians found.</p>}
             {filteredLibrarians.map((s) => (
               <div
@@ -362,6 +501,38 @@ const ManageUsers = () => {
                 <div style={{ textAlign: "left" }}>
                   <h3 style={{ margin: "0 0 4px 0", color: "var(--text-primary)" }}>{s.name || "Librarian"}</h3>
                   <p style={{ margin: "0", color: "var(--text-muted)", fontSize: "0.9rem" }}>{s.email}</p>
+                </div>
+                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                  <button
+                    onClick={() => resetLibrarianPassword(s._id)}
+                    style={{
+                      padding: "8px 16px",
+                      borderRadius: "6px",
+                      border: "1px solid var(--border-gold)",
+                      background: "var(--black-secondary)",
+                      color: "var(--gold-main)",
+                      cursor: "pointer",
+                      fontWeight: "600",
+                      fontSize: "0.9rem",
+                    }}
+                  >
+                    Reset Password
+                  </button>
+                  <button
+                    onClick={() => deleteLibrarian(s._id)}
+                    style={{
+                      padding: "8px 16px",
+                      borderRadius: "6px",
+                      border: "none",
+                      background: "#d9534f",
+                      color: "white",
+                      cursor: "pointer",
+                      fontWeight: "600",
+                      fontSize: "0.9rem",
+                    }}
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
             ))}

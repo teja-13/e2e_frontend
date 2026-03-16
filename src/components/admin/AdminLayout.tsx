@@ -70,6 +70,9 @@ const AdminLayout = () => {
             <NavLink to="/admin/books" onClick={() => setOpen(false)} className={({isActive}) => isActive ? 'active' : ''}>
               Books
             </NavLink>
+            <NavLink to="/admin/analytics" onClick={() => setOpen(false)} className={({isActive}) => isActive ? 'active' : ''}>
+              Analytics
+            </NavLink>
           </nav>
         </aside>
 

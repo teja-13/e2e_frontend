@@ -13,6 +13,15 @@ const Notifications = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const markRead = async (id: string) => {
+    try {
+      await api.patch(`/student/notifications/${id}/read`);
+      setNotices((prev) => prev.filter((n) => n._id !== id));
+    } catch (err) {
+      setError("Unable to update notification");
+    }
+  };
+
   const load = async () => {
     setLoading(true);
     setError("");
@@ -59,6 +68,21 @@ const Notifications = () => {
                 {new Date(n.createdAt).toLocaleString()}
               </p>
             )}
+            <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "6px" }}>
+              <button
+                onClick={() => markRead(n._id)}
+                style={{
+                  background: "transparent",
+                  color: "var(--gold-main)",
+                  border: "1px solid var(--border-gold)",
+                  borderRadius: "6px",
+                  padding: "4px 8px",
+                  cursor: "pointer",
+                }}
+              >
+                ✓
+              </button>
+            </div>
           </div>
         ))}
       </div>

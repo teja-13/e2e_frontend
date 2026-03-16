@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import api from "../../services/api";
@@ -7,6 +7,7 @@ type Notice = {
   _id: string;
   message: string;
   createdAt?: string;
+  read?: boolean;
 };
 
 const StudentLayout = () => {
@@ -18,6 +19,7 @@ const StudentLayout = () => {
   const [activeToast, setActiveToast] = useState<Notice | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pollTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const unreadNotices = useMemo(() => notices.filter((n) => !n.read), [notices]);
 
   useEffect(() => {
     const role = localStorage.getItem("role");
@@ -69,6 +71,22 @@ const StudentLayout = () => {
     navigate("/");
   };
 
+  const handleToggleNotifications = async () => {
+    if (!notifOpen) {
+      await fetchNotifications();
+    }
+    setNotifOpen((s) => !s);
+  };
+
+  const markRead = async (id: string) => {
+    try {
+      await api.patch(`/student/notifications/${id}/read`);
+      setNotices((prev) => prev.filter((n) => n._id !== id));
+    } catch (err) {
+      // keep silent to not break UI
+    }
+  };
+
   return (
     <>
       {/* ===== HEADER ===== */}
@@ -102,7 +120,7 @@ const StudentLayout = () => {
           <div style={{ position: "relative", marginLeft: "10px" }}>
             <button
               aria-label="Notifications"
-              onClick={() => setNotifOpen((s) => !s)}
+              onClick={handleToggleNotifications}
               style={{
                 background: "var(--black-secondary)",
                 border: "1px solid var(--border-gold)",
@@ -118,7 +136,7 @@ const StudentLayout = () => {
             >
               ✉️
             </button>
-            {notices.length > 0 && (
+            {unreadNotices.length > 0 && (
               <span
                 style={{
                   position: "absolute",
@@ -137,7 +155,7 @@ const StudentLayout = () => {
                   border: "1px solid var(--border-gold)",
                 }}
               >
-                {Math.min(notices.length, 9)}
+                {Math.min(unreadNotices.length, 9)}
               </span>
             )}
 
@@ -177,6 +195,21 @@ const StudentLayout = () => {
                         {new Date(n.createdAt).toLocaleString()}
                       </div>
                     )}
+                    <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "6px" }}>
+                      <button
+                        onClick={() => markRead(n._id)}
+                        style={{
+                          background: "transparent",
+                          color: "var(--gold-main)",
+                          border: "1px solid var(--border-gold)",
+                          borderRadius: "6px",
+                          padding: "4px 8px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        ✓
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
