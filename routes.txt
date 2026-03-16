@@ -1,0 +1,51 @@
+==================================================
+SMART LIBRARY MANAGEMENT SYSTEM - ALL ROUTES
+==================================================
+
+PUBLIC ROUTES
+=============
+/                           - Student Login (Homepage)
+/request-signup             - Student Sign Up Request
+
+
+STUDENT MODULE ROUTES
+======================
+/student/dashboard          - Student Dashboard
+/student/books/search       - Book Search
+/student/my-books           - My Books
+/student/settings           - Student Settings (Profile, Fines, Notifications)
+
+
+LIBRARIAN MODULE ROUTES
+========================
+/librarian/login            - Librarian Login
+/librarian/request-signup   - Librarian Sign Up Request
+/librarian/dashboard        - Librarian Dashboard
+/librarian/books            - Manage Books
+/librarian/students         - Manage Students
+
+
+ADMIN MODULE ROUTES
+====================
+/admin/login                - Admin Login
+/admin/signup               - Admin Sign Up
+/admin/dashboard            - Admin Dashboard
+/admin/users                - Manage Users (Students & Librarians)
+/admin/books                - Manage Books
+
+
+==================================================
+ACCESS RULES
+==================================================
+
+VISIBLE ROUTES (Public/Linked):
+- / (Student Login - Current Homepage)
+
+HIDDEN ROUTES (Direct URL access only):
+- All librarian routes (/librarian/*)
+- All admin routes (/admin/*)
+- /request-signup (Student signup - not linked from homepage)
+
+STUDENT ROUTES:
+- Accessible after student login
+- Navigation via StudentLayout component
